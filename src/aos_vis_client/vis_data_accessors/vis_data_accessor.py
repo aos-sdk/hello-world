@@ -13,9 +13,8 @@
 # limitations under the License.
 
 import logging
-
-from time import sleep, time
 from copy import copy
+from time import sleep, time
 
 from aos_vis_client.vis_data_accessors import VISBase, RequestInfo, VISClientNoValueException
 

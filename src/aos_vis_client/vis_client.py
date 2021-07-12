@@ -18,6 +18,7 @@ import logging
 import weakref
 import json
 from threading import Thread, Lock
+from uuid import uuid4
 
 from websocket import create_connection, WebSocketTimeoutException
 
@@ -34,9 +35,10 @@ class VISClient(Thread):
     _SOCKET_TIMEOUT = 0.1
     _SLEEP_INTERVAL = 0.1
 
-    def __init__(self, vis_server_url, *args, **kwargs):
+    def __init__(self, vis_server_url, auth_token=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__vis_server_url = vis_server_url
+        self._auth_token = auth_token
 
         self._ws = None
         self._data_accessors = []
@@ -63,6 +65,9 @@ class VISClient(Thread):
             timeout=self._SOCKET_TIMEOUT,
             sslopt={"cert_reqs": ssl.CERT_NONE}
         )
+        if self._auth_token:
+            request_id = str(uuid4())
+            self._send_authorize_request(self._auth_token, request_id)
 
     def _disconnect_ws(self):
         """
@@ -190,6 +195,15 @@ class VISClient(Thread):
 
         self._data_accessors.append(weakref.ref(vis_data))
         vis_data.ws = self._ws
+
+    def _send_authorize_request(self, token, request_id):
+        logging.debug("Sending authorize request")
+
+        self._ws.send(json.dumps({
+            "action": "authorize",
+            "tokens": {"authorization": token},
+            "requestId": request_id,
+        }))
 
 
 __all__ = [VISClient, ]

@@ -27,14 +27,14 @@ VIS_URL = "wss://wwwivi:443/"
 
 # Go to https://webhook.site/#/ copy and paste server link to HTTP_REQUEST_RECEIVER_URL
 HTTP_REQUEST_RECEIVER_URL = os.environ.get('WEBHOOK_SITE')
-
+VIS_AUTH_TOKEN = os.environ.get('SERVICE_SECRET')
 DATA_SENDING_DELAY = 2
 WAIT_TIMEOUT = 5
 DELAY_AFTER_ERROR = 2
 
 
 def main():
-    with VISClient(VIS_URL) as client:
+    with VISClient(VIS_URL, VIS_AUTH_TOKEN) as client:
         # Initialize data accessor to "VIN" attribute and get this attribute.
         vin_accessor = VISDataAccessor(path="Attribute.Vehicle.VehicleIdentification.VIN")
         client.register_vis_data(vin_accessor)

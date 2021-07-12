@@ -10,7 +10,7 @@ publish:
     service_uid:
     tls_key: private_key.pem
     tls_certificate: sp-client.pem
-    version: "1.1"
+    version: "1.2"
 
 configuration:
     state:
@@ -23,4 +23,6 @@ configuration:
     resources:
         - vis
     env:
-        - WEBHOOK_SITE=https://webhook.site/
+        - WEBHOOK_SITE=
+    layers:
+        - 'py-libs-layer'

@@ -105,6 +105,19 @@ class VISBase(metaclass=ABCMeta):
         }))
         return request_id
 
+    def _send_authorize_request(self, token, request_id):
+        logging.debug("Sending authorize request")
+
+        if not self.ws:
+            raise VISDataNotRegistered("VISData object not registered in client.")
+
+        self.ws.send(json.dumps({
+            "action": "authorize",
+            "tokens": {"authorization": token},
+            "requestId": request_id,
+        }))
+        return request_id
+
     @property
     def path(self):
         return self._path
